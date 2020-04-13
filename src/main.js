@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 'use strict'
 
 const newTables = require('./table-enumeration-watcher')
