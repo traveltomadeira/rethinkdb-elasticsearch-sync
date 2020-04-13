@@ -1,0 +1,28 @@
+'use strict'
+
+const newTables = require('./table-enumeration-watcher')
+const dbTableWatch = require('./table-watch')
+const elasticSync = require('./elastic-sync')
+
+;(async () => {
+  const rethinkOptions = { db: 'ttm-dev' }
+  const elasticOptions = { node: 'http://localhost:9200' }
+  const newTablesWatcher = newTables({ rethinkOptions })
+  const createTableWatch = dbTableWatch({ rethinkOptions })
+  const createElasticSync = elasticSync({ elasticOptions })
+
+  for await (const table of newTablesWatcher) {
+    if (table[0] === '_') {
+      continue
+    }
+    console.log(`watching table ${table}`)
+    const watch = await createTableWatch(table)
+    createElasticSync({ table, watch })
+  }
+})()
+
+process.on('unhandledRejection', (error) => {
+  console.error(error)
+  console.error(JSON.stringify(error, null, '\t'))
+  process.exit(1)
+});
