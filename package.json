@@ -7,10 +7,9 @@
     "rethinkdb-elasticsearch-sync": "src/main.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/main"
   },
-  "keywords": [],
+  "keywords": ["rethinkdb", "elasticsearch", "sync"],
   "author": "",
   "license": "ISC",
   "dependencies": {
