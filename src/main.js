@@ -6,8 +6,27 @@ const elasticSync = require('./elastic-sync')
 const logger = require('./logger')
 
 ;(async () => {
-  const rethinkOptions = { db: 'ttm-dev' }
-  const elasticOptions = { node: 'http://localhost:9200' }
+  const rethinkOptions = {
+    host: process.env.RETHINKDB_HOST,
+    port: process.env.RETHINKDB_PORT,
+    db: process.env.RETHINKDB_DB,
+    user: process.env.RETHINKDB_USER,
+    password: process.env.RETHINKDB_PASSWORD,
+  }
+
+  if (!process.env.ELASTICSEARCH_URI) {
+    throw new Error('Please define the ELASTICSEARCH_URI environment variable')
+  }
+
+  const elasticOptions = {
+    node: process.env.ELASTICSEARCH_URI,
+    auth: {
+      username: process.env.ELASTICSEARCH_USER,
+      password: process.env.ELASTICSEARCH_PASSWORD,
+      apiKey: process.env.ELASTICSEARCH_API_KEY
+    }
+  }
+
   const newTablesWatcher = newTables({ rethinkOptions })
   const createTableWatch = dbTableWatch({ rethinkOptions })
   const createElasticSync = elasticSync({ elasticOptions })
@@ -23,7 +42,6 @@ const logger = require('./logger')
 })()
 
 process.on('unhandledRejection', (error) => {
-  console.error(error)
-  console.error(JSON.stringify(error, null, '\t'))
+  logger.fatal({ error: error.message, detail: error })
   process.exit(1)
-});
+})
