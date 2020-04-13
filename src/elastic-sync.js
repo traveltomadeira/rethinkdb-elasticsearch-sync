@@ -1,6 +1,7 @@
 'use strict'
 
 const { Client } = require('@elastic/elasticsearch')
+const logger = require('./logger')
 
 module.exports = ({elasticOptions}) => async ({table, watch}) => {
   const client = new Client(elasticOptions)
@@ -36,20 +37,18 @@ module.exports = ({elasticOptions}) => async ({table, watch}) => {
         body: { doc: new_val }
       }
 
-      console.log('will update', update)
+      logger.info({ table, willUpdate: id })
       await client.update(update)
-      console.log('updated', update)
+      logger.info({ table, updated: id })
     } else {
       const creation = {
         id,
         index,
         body: new_val
       }
-      console.log('will create', creation)
+      logger.info({ table, willInsert: id })
       await client.create(creation)
-      console.log('created', creation)
+      logger.info({ table, inserted: id })
     }
-
-
   }
 }

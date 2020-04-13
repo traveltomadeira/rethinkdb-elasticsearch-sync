@@ -3,6 +3,7 @@
 const newTables = require('./table-enumeration-watcher')
 const dbTableWatch = require('./table-watch')
 const elasticSync = require('./elastic-sync')
+const logger = require('./logger')
 
 ;(async () => {
   const rethinkOptions = { db: 'ttm-dev' }
@@ -12,10 +13,10 @@ const elasticSync = require('./elastic-sync')
   const createElasticSync = elasticSync({ elasticOptions })
 
   for await (const table of newTablesWatcher) {
-    if (table[0] === '_') {
+    if (table.startsWith('_')) {
       continue
     }
-    console.log(`watching table ${table}`)
+    logger.info({ newTable: table })
     const watch = await createTableWatch(table)
     createElasticSync({ table, watch })
   }
