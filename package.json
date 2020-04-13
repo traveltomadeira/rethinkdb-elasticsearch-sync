@@ -1,7 +1,8 @@
 {
   "name": "rethinkdb-elasticsearch-sync",
   "version": "0.1.0",
-  "description": "",
+  "description": "Synchronizes RethinkDB database into an ElasticSearch service",
+  "homepage": "https://github.com/traveltomadeira/rethinkdb-elasticsearch-sync",
   "bin": {
     "rethinkdb-elasticsearch-sync": "src/main.js"
   },
