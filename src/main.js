@@ -28,6 +28,8 @@ const logger = require('./logger')
     }
   }
 
+  logger.info({ config: { rethink: rethinkOptions, elastic: elasticOptions }})
+
   const newTablesWatcher = newTables({ rethinkOptions })
   const createTableWatch = dbTableWatch({ rethinkOptions })
   const createElasticSync = elasticSync({ elasticOptions })
