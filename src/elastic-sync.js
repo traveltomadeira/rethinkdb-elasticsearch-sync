@@ -16,18 +16,21 @@ module.exports = ({elasticOptions}) => async ({table, watch}) => {
   }
 
   for await (const change of watch) {
-    const { new_val } = change
-    const { id } = new_val
+    const { old_val, new_val, type } = change
+    const { id } = (new_val || old_val)
     const index = table
+    const remove = (type === 'remove')
     let exists = false
 
-    try {
-      exists = await client.get({
-        id,
-        index
-      })
-    } catch (err) {
-      // do nothing
+    if (!remove) {
+      try {
+        exists = await client.get({
+          id,
+          index
+        })
+      } catch (err) {
+        // do nothing
+      }
     }
 
     if (exists) {
@@ -40,7 +43,7 @@ module.exports = ({elasticOptions}) => async ({table, watch}) => {
       logger.info({ table, willUpdate: id })
       await client.update(update)
       logger.info({ table, updated: id })
-    } else {
+    } else if (!remove) {
       const creation = {
         id,
         index,
@@ -49,6 +52,14 @@ module.exports = ({elasticOptions}) => async ({table, watch}) => {
       logger.info({ table, willInsert: id })
       await client.create(creation)
       logger.info({ table, inserted: id })
+    } else {
+      const deletion = {
+        id,
+        index
+      }
+      logger.info({ table, willRemove: id })
+      await client.delete(deletion)
+      logger.info({ table, removed: id })
     }
   }
 }
