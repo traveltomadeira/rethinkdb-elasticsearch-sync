@@ -131,4 +131,6 @@ async function waitForElastic(retried = 0) {
     await delay(WAIT_FOR_ELASTIC_POLL_INTERVAL_MS)
     await waitForElastic(retried + 1)
   }
+
+  await delay(4000)
 }
