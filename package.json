@@ -26,7 +26,6 @@
   },
   "devDependencies": {
     "delay": "^4.3.0",
-    "faker": "^4.1.0",
     "jest": "^25.3.0"
   }
 }
