@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node src/main",
     "test": "docker-compose run --rm sync npm run test:internal",
-    "test:internal": "node ./node_modules/.bin/jest test/sync.test.js --silent=false --testTimeout=60000"
+    "test:internal": "jest test/sync.test.js --silent=false --testTimeout=60000"
   },
   "keywords": [
     "rethinkdb",
