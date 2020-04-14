@@ -14,8 +14,8 @@ const WAIT_FOR_ELASTIC_POLL_MAX_RETRIES = 20
 const elasticGetAllUsers = {
   index: 'users',
   body: {
-    "query": {
-      "match_all": {}
+    query: {
+      match_all: {}
     }
   }
 }
@@ -39,7 +39,7 @@ describe('sync', () => {
     const usersLength = await getUsers()
     expect(usersLength).toBe(usersLength)
 
-    await delay(10000)
+    await delay(5000)
 
     const { body } = await elasticsearchClient.search(elasticGetAllUsers)
     expect( body.hits.total.value).toBe(usersLength)
@@ -48,11 +48,36 @@ describe('sync', () => {
   it('delete 50 users', async () => {
     await deleteUsers(50)
 
-    await delay(10000)
+    await delay(5000)
 
     const usersLength = await getUsers()
     const { body } = await elasticsearchClient.search(elasticGetAllUsers)
     expect(body.hits.total.value).toBe(usersLength)
+  })
+
+  it('updates one user', async () => {
+    await updateRandomUser()
+
+    await delay(5000)
+
+    const { body } = await elasticsearchClient.search({
+      index: 'users',
+      body: {
+        query: {
+          multi_match: {
+            query: 'Potato'
+          }
+        }
+      }
+    })
+
+    expect(body.hits.total.value).toBe(1)
+
+    expect(body.hits.hits[0]._source).toEqual({
+      id: '9dc65d91438b',
+      fullName: 'Potato Potato',
+      email: 'luis.leannon70@hotmail.com'
+    })
   })
 })
 
@@ -105,6 +130,18 @@ function deleteUsers(limit) {
       .table('users')
       .limit(limit)
       .delete()
+      .run(conn)
+  )
+}
+
+function updateRandomUser() {
+  return withConnection((conn) =>
+    r
+      .table('users')
+      .get('9dc65d91438b')
+      .update({
+        fullName: 'Potato Potato'
+      })
       .run(conn)
   )
 }
