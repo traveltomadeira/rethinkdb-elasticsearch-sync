@@ -149,8 +149,8 @@ function updateRandomUser() {
 function startSync() {
   return childProcess.fork(path.join(__dirname, '..', 'src', 'main.js'), {
     env: {
-      ELASTICSEARCH_URI: 'http://elasticsearch:9200',
-      RETHINKDB_HOST: 'rethink',
+      ELASTICSEARCH_URI: 'http://synctest-elasticsearch:9200',
+      RETHINKDB_HOST: 'synctest-rethink',
       RETHINKDB_DB: 'synctest'
     },
     // silent: false,
