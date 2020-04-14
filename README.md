@@ -1,6 +1,15 @@
 # rethinkdb-elasticsearch-sync
 
-> Synchronizes RethinkDB database into an ElasticSearch service
+> Command-line utility that synchronizes RethinkDB database into an ElasticSearch service.
+
+Characteristics:
+
+* Listens to changes on all tables on a RethinkDB database.
+* Supports the creation of new tables.
+* Sends the document *as is* to Elastic Search.
+* Maps a table in RethinkDB to an index on ElasticSearch.
+* Outputs logs in JSON format
+
 
 ## Install
 
