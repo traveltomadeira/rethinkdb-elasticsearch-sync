@@ -18,7 +18,7 @@ const elasticGetAllUsers = {
 }
 
 describe('sync', () => {
-  beforeEach(setupRethink)
+  beforeAll(setupRethink)
 
   let syncChild
   beforeAll(() => {
@@ -29,7 +29,7 @@ describe('sync', () => {
     syncChild.kill()
   })
 
-  beforeEach(createManyUsers)
+  beforeAll(createManyUsers)
 
   it('sync 100 users', async () => {
     const usersLength = await getUsers()
