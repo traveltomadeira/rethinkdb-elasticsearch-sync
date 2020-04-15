@@ -23,11 +23,14 @@ const elasticGetAllUsers = {
 describe('sync', () => {
   beforeEach(setupRethink)
   beforeAll(waitForElastic)
+  beforeEach(setupElastic)
 
   let syncChild
-  beforeAll(() => {
+  beforeAll(async () => {
     syncChild = startSync()
   })
+
+  beforeEach(() => delay(3000))
 
   afterAll(() => {
     syncChild.kill()
@@ -35,18 +38,19 @@ describe('sync', () => {
 
   beforeEach(createManyUsers)
 
+  beforeEach(() => delay(10000))
+
   it('sync 100 users', async () => {
     const usersLength = await getUsers()
-    expect(usersLength).toBe(usersLength)
-
-    await delay(10000)
-
+    expect(usersLength).toBe(100)
     const { body } = await elasticsearchClient.search(elasticGetAllUsers)
-    expect( body.hits.total.value).toBe(usersLength)
+    expect( body.hits.total.value).toBe(100)
   })
 
   it('delete 50 users', async () => {
+    console.log('deleting 50 users...')
     await deleteUsers(50)
+    console.log('deleted')
 
     await delay(10000)
 
@@ -58,7 +62,7 @@ describe('sync', () => {
   it('updates one user', async () => {
     await updateRandomUser()
 
-    await delay(5000)
+    await delay(10000)
 
     const { body } = await elasticsearchClient.search({
       index: 'users',
@@ -102,19 +106,22 @@ function setupRethink() {
       }).run(conn);
 
     await r.db('synctest')
-      .table("users")
+      .table('users')
       .delete()
       .run(conn)
   })
 }
 
-function createManyUsers() {
-  return withConnection((conn) =>
+async function createManyUsers() {
+  console.log('going to create many users')
+  await withConnection((conn) =>
     r
       .table('users')
       .insert(fakeUsers())
       .run(conn)
   )
+
+  console.log('created many users')
 }
 function getUsers() {
   return withConnection((conn) =>
@@ -163,6 +170,7 @@ async function waitForElastic(retried = 0) {
     await elasticsearchClient.ping()
   } catch (err) {
     if (retried > WAIT_FOR_ELASTIC_POLL_MAX_RETRIES) {
+      console.log('WAITING THREW')
       throw err
     }
     await delay(WAIT_FOR_ELASTIC_POLL_INTERVAL_MS)
@@ -170,4 +178,21 @@ async function waitForElastic(retried = 0) {
   }
 
   await delay(4000)
+}
+
+async function setupElastic() {
+  try {
+    const { body } = await elasticsearchClient.search(elasticGetAllUsers)
+
+    for (const hit of body.hits.hits) {
+      const user = hit._source
+      const id = { user }
+      await elasticsearchClient.delete({
+        id,
+        index: 'users'
+      })
+    }
+  } catch (err) {
+    console.error('setup elastic failed', err)
+  }
 }
