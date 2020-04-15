@@ -3,5 +3,5 @@
 const { Client } = require('@elastic/elasticsearch')
 
 module.exports = new Client({
-  node: 'http://synctestelasticsearch:9200'
+  node: 'http://synctest-elasticsearch:9200'
 })
