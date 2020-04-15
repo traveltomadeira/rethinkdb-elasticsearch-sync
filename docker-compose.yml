@@ -22,8 +22,6 @@ services:
   elasticsearch:
     container_name: synctest-elasticsearch
     image: elasticsearch:7.6.0
-    volumes:
-      - ${PWD}/data/elasticsearch:/usr/share/elasticsearch/data
     ports:
       - '9200:9200'
     secrets:

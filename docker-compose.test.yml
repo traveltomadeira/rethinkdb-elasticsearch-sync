@@ -1,0 +1,6 @@
+version: '3.7'
+
+services:
+  sync:
+    build: .
+    command: npm run jest
