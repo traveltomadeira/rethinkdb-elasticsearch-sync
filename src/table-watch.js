@@ -11,6 +11,8 @@ module.exports = ({ rethinkOptions }) => {
 async function watch ({ rethinkOptions, table }) {
   const conn = await r.connect(rethinkOptions)
 
+  await r.table(table).wait({waitFor: 'ready_for_writes'}).run(conn)
+  await r.table(table).wait({waitFor: 'ready_for_reads'}).run(conn)
 
   const options = {
     squash: true,
