@@ -26,6 +26,6 @@ jobs:
       - name: Install
         run: npm ci
       - name: Test
-        run: npm test
+        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml up --exit-code-from sync
     env:
       CI: true
