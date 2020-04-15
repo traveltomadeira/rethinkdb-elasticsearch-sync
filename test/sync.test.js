@@ -18,7 +18,7 @@ const elasticGetAllUsers = {
 }
 
 describe('sync', () => {
-  beforeAll(setupRethink)
+  beforeEach(setupRethink)
 
   let syncChild
   beforeAll(async () => {
