@@ -8,9 +8,6 @@ const elasticsearchClient = require('./database/elasticsearch')
 const withConnection = require('./database/with-connection')
 const fakeUsers = require('./fake/users')
 
-const WAIT_FOR_ELASTIC_POLL_INTERVAL_MS = 2000
-const WAIT_FOR_ELASTIC_POLL_MAX_RETRIES = 20
-
 const elasticGetAllUsers = {
   index: 'users',
   body: {
@@ -22,7 +19,6 @@ const elasticGetAllUsers = {
 
 describe('sync', () => {
   beforeEach(setupRethink)
-  beforeAll(waitForElastic)
 
   let syncChild
   beforeAll(() => {
@@ -156,18 +152,4 @@ function startSync() {
     // silent: false,
     stdio: 'inherit'
   })
-}
-
-async function waitForElastic(retried = 0) {
-  try {
-    await elasticsearchClient.ping()
-  } catch (err) {
-    if (retried > WAIT_FOR_ELASTIC_POLL_MAX_RETRIES) {
-      throw err
-    }
-    await delay(WAIT_FOR_ELASTIC_POLL_INTERVAL_MS)
-    await waitForElastic(retried + 1)
-  }
-
-  await delay(4000)
 }
