@@ -22,7 +22,7 @@ const elasticGetAllUsers = {
 
 describe('sync', () => {
   beforeEach(setupRethink)
-  //beforeAll(waitForElastic)
+  beforeAll(waitForElastic)
 
   let syncChild
   beforeAll(() => {
@@ -39,7 +39,7 @@ describe('sync', () => {
     const usersLength = await getUsers()
     expect(usersLength).toBe(usersLength)
 
-    await delay(2000)
+    await delay(10000)
 
     const { body } = await elasticsearchClient.search(elasticGetAllUsers)
     expect( body.hits.total.value).toBe(usersLength)
@@ -48,7 +48,7 @@ describe('sync', () => {
   it('delete 50 users', async () => {
     await deleteUsers(50)
 
-    await delay(2000)
+    await delay(10000)
 
     const usersLength = await getUsers()
     const { body } = await elasticsearchClient.search(elasticGetAllUsers)
@@ -58,7 +58,7 @@ describe('sync', () => {
   it('updates one user', async () => {
     await updateRandomUser()
 
-    await delay(3000)
+    await delay(5000)
 
     const { body } = await elasticsearchClient.search({
       index: 'users',
