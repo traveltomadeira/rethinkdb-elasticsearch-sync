@@ -18,18 +18,21 @@ const elasticGetAllUsers = {
 }
 
 describe('sync', () => {
-  beforeAll(setupRethink)
+  beforeEach(setupRethink)
+  beforeEach(setupElastic)
 
   let syncChild
-  beforeAll(() => {
+  beforeAll(async () => {
     syncChild = startSync()
   })
+
+  beforeEach(() => delay(3000))
 
   afterAll(() => {
     syncChild.kill()
   })
 
-  beforeAll(createManyUsers)
+  beforeEach(createManyUsers)
 
   it('sync 100 users', async () => {
     const usersLength = await getUsers()
@@ -102,6 +105,10 @@ function setupRethink() {
       .delete()
       .run(conn)
     
+    await r.db('synctest').wait({waitFor: 'ready_for_writes'}).run(conn)
+    await r.db('synctest').wait({waitFor: 'ready_for_reads'}).run(conn)
+    await r.db('synctest').table('users').wait({waitFor: 'ready_for_writes'}).run(conn)
+    await r.db('synctest').table('users').wait({waitFor: 'ready_for_reads'}).run(conn)
   })
 }
 
