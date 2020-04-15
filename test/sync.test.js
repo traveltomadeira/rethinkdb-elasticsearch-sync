@@ -161,3 +161,19 @@ function startSync() {
     stdio: 'inherit'
   })
 }
+async function setupElastic() {
+  try {
+    const { body } = await elasticsearchClient.search(elasticGetAllUsers)
+
+    for (const hit of body.hits.hits) {
+      const user = hit._source
+      const id = { user }
+      await elasticsearchClient.delete({
+        id,
+        index: 'users'
+      })
+    }
+  } catch (err) {
+    console.error('setup elastic failed', err)
+  }
+}
