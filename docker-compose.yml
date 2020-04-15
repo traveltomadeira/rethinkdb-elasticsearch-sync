@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   sync:
-    container_name: rethinkdb-elasticsearch-sync-test
+    container_name: rethinkdbelasticsearch-sync-test
     image: node:12
     working_dir: /app
     depends_on:
@@ -12,18 +12,14 @@ services:
       - ./:/app
 
   rethink:
-    container_name: synctest-rethink
+    container_name: synctestrethink
     image: rethinkdb
-    volumes:
-      - ${PWD}/data/rethink:/data
     ports:
       - 28015:28015
 
   elasticsearch:
-    container_name: synctest-elasticsearch
+    container_name: synctestelasticsearch
     image: elasticsearch:7.6.0
-    volumes:
-      - ${PWD}/data/elasticsearch:/usr/share/elasticsearch/data
     ports:
       - '9200:9200'
     secrets:

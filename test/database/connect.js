@@ -5,7 +5,7 @@ const r = require('rethinkdb')
 module.exports = () => {
   const options = {
     db: 'synctest',
-    host: 'synctest-rethink'
+    host: 'synctestrethink'
   }
   return r.connect(options)
 }

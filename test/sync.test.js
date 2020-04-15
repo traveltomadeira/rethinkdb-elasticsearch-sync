@@ -18,7 +18,7 @@ const elasticGetAllUsers = {
 }
 
 describe('sync', () => {
-  beforeEach(setupRethink)
+  beforeAll(setupRethink)
 
   let syncChild
   beforeAll(() => {
@@ -145,8 +145,8 @@ function updateRandomUser() {
 function startSync() {
   return childProcess.fork(path.join(__dirname, '..', 'src', 'main.js'), {
     env: {
-      ELASTICSEARCH_URI: 'http://synctest-elasticsearch:9200',
-      RETHINKDB_HOST: 'synctest-rethink',
+      ELASTICSEARCH_URI: 'http://synctestelasticsearch:9200',
+      RETHINKDB_HOST: 'synctestrethink',
       RETHINKDB_DB: 'synctest'
     },
     // silent: false,
