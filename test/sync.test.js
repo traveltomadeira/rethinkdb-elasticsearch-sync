@@ -102,10 +102,6 @@ function setupRethink() {
       .delete()
       .run(conn)
     
-    await r.db('synctest').wait({waitFor: 'ready_for_writes'}).run(conn)
-    await r.db('synctest').wait({waitFor: 'ready_for_reads'}).run(conn)
-    await r.db('synctest').table('users').wait({waitFor: 'ready_for_writes'}).run(conn)
-    await r.db('synctest').table('users').wait({waitFor: 'ready_for_reads'}).run(conn)
   })
 }
 
