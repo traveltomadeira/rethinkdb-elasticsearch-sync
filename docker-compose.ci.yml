@@ -1,0 +1,6 @@
+version: '3.7'
+
+services:
+  sync:
+    build: .
+    command: ["./wait-for-it.sh", "synctest-elasticsearch:9200", "--", "npm", "run", "jest"]

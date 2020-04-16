@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+  sync:
+    container_name: rethinkdb-elasticsearch-sync-test
+    image: node:12
+    working_dir: /app
+    depends_on:
+      - rethink
+      - elasticsearch
+    volumes:
+      - ./:/app
+
+  rethink:
+    container_name: synctest-rethink
+    image: rethinkdb
+    ports:
+      - 28015:28015
+
+  elasticsearch:
+    container_name: synctest-elasticsearch
+    image: elasticsearch:7.6.0
+    ports:
+      - '9200:9200'
+    secrets:
+      - source: elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+    environment:
+      ES_JAVA_OPTS: '-Xmx256m -Xms256m'
+      ELASTIC_PASSWORD: changeme
+      # Use single node discovery in order to disable production mode and avoid bootstrap checks
+      # see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      discovery.type: single-node
+
+secrets:
+  elasticsearch.yml:
+    file: ./.config/elasticsearch.yml
