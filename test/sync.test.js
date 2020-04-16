@@ -9,7 +9,7 @@ const withConnection = require('./database/with-connection')
 const fakeUsers = require('./fake/users')
 
 const WAIT_FOR_ELASTIC_POLL_INTERVAL_MS = 2000
-const WAIT_FOR_ELASTIC_POLL_MAX_RETRIES = 20
+const WAIT_FOR_ELASTIC_POLL_MAX_RETRIES = 50
 
 const elasticGetAllUsers = {
   index: 'users',
@@ -23,6 +23,7 @@ const elasticGetAllUsers = {
 describe('sync', () => {
   beforeEach(setupRethink)
   beforeAll(waitForElastic)
+  beforeAll(() => delay(3000))
   beforeEach(setupElastic)
 
   let syncChild
@@ -176,8 +177,6 @@ async function waitForElastic(retried = 0) {
     await delay(WAIT_FOR_ELASTIC_POLL_INTERVAL_MS)
     await waitForElastic(retried + 1)
   }
-
-  await delay(4000)
 }
 
 async function setupElastic() {
