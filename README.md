@@ -40,6 +40,14 @@ ElasticSearch options:
 * `ELASTICSEARCH_PASSWORD`
 * `ELASTICSEARCH_API_KEY`
 
+# Test
+
+To run tests locally you need Docker-compose installed (so that it starts RethinkDB and ElasticSearch and runs the tests inside a container connected to those two).
+
+```
+$ npm test
+```
+
 # License
 
 MIT
